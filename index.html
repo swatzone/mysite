@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dual Profile Display</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+<body>
+    <div id="intro-screen">
+        <span class="intro-text">click to enter ;)</span>
+    </div>
+
+    <div class="audio-controls">
+        <div class="volume-container">
+            <button id="volume-btn" class="volume-btn">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="50">
+        </div>
+    </div>
+
+    <audio id="background-music" loop>
+        <source src="song.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="main-title">
+        <h1 class="neon-text-title">exx & ellie</h1>
+        <button class="folder-btn" onclick="toggleSlideshow()">
+            <i class="fas fa-folder"></i> Folder
+        </button>
+    </div>
+
+    <div class="slideshow-container" id="slideshow">
+        <div class="slides fade">
+            <img src="image1.png" alt="Image 1">
+        </div>
+        <div class="slides fade">
+            <img src="image2.png" alt="Image 2">
+        </div>
+        <div class="slides fade">
+            <img src="image3.png" alt="Image 3">
+        </div>
+        <button class="prev" onclick="changeSlide(-1)">❮</button>
+        <button class="next" onclick="changeSlide(1)">❯</button>
+        <button class="close-btn" onclick="toggleSlideshow()">×</button>
+    </div>
+
+    <div class="container">
+        <div class="profile-panel exx">
+            <div class="profile-content">
+                <img src="exxpfp.png" alt="Exx Profile" class="profile-pic">
+                <h2 class="neon-text">exx</h2>
+                <div class="social-buttons">
+                    <a href="https://www.roblox.com/users/6063702808/profile" target="_blank" class="social-btn roblox-btn">
+                        <i class="fas fa-gamepad"></i> Roblox
+                    </a>
+                    <button class="social-btn discord-btn" onclick="copyDiscord('selfascend')">
+                        <i class="fab fa-discord"></i> Discord
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="profile-panel ellie">
+            <div class="profile-content">
+                <img src="elliepfp.png" alt="Ellie Profile" class="profile-pic">
+                <h2 class="neon-text">ellie</h2>
+                <div class="social-buttons">
+                    <a href="https://www.roblox.com/users/979863477/profile" target="_blank" class="social-btn roblox-btn">
+                        <i class="fas fa-gamepad"></i> Roblox
+                    </a>
+                    <button class="social-btn discord-btn" onclick="copyDiscord('worstmemory')">
+                        <i class="fab fa-discord"></i> Discord
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Slideshow Controls
+        let slideIndex = 1;
+        let slideshowVisible = false;
+
+        function toggleSlideshow() {
+            const slideshow = document.getElementById("slideshow");
+            slideshowVisible = !slideshowVisible;
+            slideshow.style.display = slideshowVisible ? "block" : "none";
+            if (slideshowVisible) {
+                showSlides(slideIndex);
+            }
+        }
+
+        function changeSlide(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function showSlides(n) {
+            const slides = document.getElementsByClassName("slides");
+            if (n > slides.length) {slideIndex = 1}
+            if (n < 1) {slideIndex = slides.length}
+            
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slides[slideIndex-1].style.display = "block";
+        }
+
+        // Discord Copy Function
+        function copyDiscord(username) {
+            navigator.clipboard.writeText(username);
+            Toastify({
+                text: "Discord Username copied to Clipboard",
+                duration: 2000,
+                gravity: "bottom",
+                position: "center",
+                style: {
+                    background: "rgba(88, 101, 242, 0.9)",
+                    backdropFilter: "blur(10px)",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 15px rgba(0,0,0,0.2)"
+                }
+            }).showToast();
+        }
+
+        // Audio and Intro Screen Controls
+        const introScreen = document.getElementById('intro-screen');
+        const audio = document.getElementById('background-music');
+        const volumeBtn = document.getElementById('volume-btn');
+        const volumeSlider = document.getElementById('volume-slider');
+        let isPlaying = false;
+
+        introScreen.addEventListener('click', () => {
+            introScreen.style.opacity = '0';
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+            }, 500);
+            
+            audio.volume = volumeSlider.value / 100;
+            audio.play();
+            isPlaying = true;
+        });
+
+        volumeBtn.addEventListener('click', () => {
+            if (audio.muted) {
+                audio.muted = false;
+                volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            } else {
+                audio.muted = true;
+                volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            }
+        });
+
+        volumeSlider.addEventListener('input', (e) => {
+            const value = e.target.value;
+            audio.volume = value / 100;
+            
+            if (value == 0) {
+                volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            } else if (value < 50) {
+                volumeBtn.innerHTML = '<i class="fas fa-volume-down"></i>';
+            } else {
+                volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            }
+        });
+    </script>
+</body>
+</html>
